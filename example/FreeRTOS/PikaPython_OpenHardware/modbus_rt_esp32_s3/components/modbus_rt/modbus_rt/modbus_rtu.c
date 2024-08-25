@@ -1630,7 +1630,7 @@ int modbus_rtu_set_done_callback(rtu_modbus_device_t dev, int (*done)(agile_modb
 /**
  * @brief   modbus_rtu_set_dev_binding: 开启slave的设备绑定功能
  * @param   dev:                        tcp_modbus_device_t设备
- * @param   flag:                       0：关闭p2p模式；1：开启p2p模式
+ * @param   flag:                       0：关闭设备绑定模式；1：开启设备绑定模式
  * @return  int:                        MODBUS_RT_EOK：成功，其他：失败
  *
  */
