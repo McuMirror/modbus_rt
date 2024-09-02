@@ -7,6 +7,7 @@
 rtu_modbus_device_t rs = NULL;
 tcp_modbus_device_t ts = NULL;
 tcp_modbus_device_t tsu = NULL;
+tcp_modbus_device_t tm = NULL;
 uint16_t reg_temp[10] = {1,2,3,4,5,6,7,8,9,10};
 
 int rtu_slave_done_callback(agile_modbus_t *ctx, int slave, int function,int addr, int quantity) {
@@ -97,6 +98,23 @@ int modbus_tcp_slave_for_udp_open_test( void ) {
         return -MODBUS_RT_ERROR;
     }
     if(MODBUS_RT_EOK != (ret = modbus_tcp_open(tsu))) {
+        printf("modbus_tcp_open error, code is: %d.\n", ret);
+        return -MODBUS_RT_ERROR;
+    }
+    return ret;
+}
+
+int modbus_tcp_master_open_test(char* ip, int port) {
+    int ret = MODBUS_RT_EOK;
+    if(NULL == (tm = modbus_tcp(MODBUS_MASTER))) {
+        printf("modbus_tcp_master create error.\n");
+        return -MODBUS_RT_ERROR;
+    }
+    if(MODBUS_RT_EOK != (ret = modbus_tcp_set_server(tm, ip, port))) {
+        printf("modbus_tcp_set_server error, code is: %d.\n", ret);
+        return -MODBUS_RT_ERROR;
+    }
+    if(MODBUS_RT_EOK != (ret = modbus_tcp_open(tm))) {
         printf("modbus_tcp_open error, code is: %d.\n", ret);
         return -MODBUS_RT_ERROR;
     }

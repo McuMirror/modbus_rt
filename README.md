@@ -324,7 +324,13 @@ ts.open()
 
 ![esp32_console](img/esp32_console.png)
 
-4. 如果要运行PIKA_PI_WIRELESS_FIRMWARE固件，希望用wifi来运行modbus TCP或者其他基于网络的modbus实例的话，需要确保WiFi已经连接到AP路由上之后再用open函数运行modbus实例，否则，会导致由于网络未连接导致网络的modbus执行失败。
+4. 在该案例中，我们创建了modbus rtu slave, modbus tcp slave, modbus tcp slave over udp三个从设备，并同时绑定寄存器到reg_temp变量中。同时，通过修改reg_temp[0]的值来开启和操作一个modbus tcp master设备操作流程如下：
+   * 如果reg_temp[0]的值为100，则启动modbus tcp master，连接到一个modbus tcp slave上，从设备的IP和端口号，通过int modbus_tcp_master_open_test(char* ip, int port)函数接口输入。
+   * 如果reg_temp[0]的值为101， 尝试把slave的数据reg_temp[8]，reg_temp[9]的数值写入到从设备（地址为1）的设备寄存器中（地址为8，9）。
+   * 如果reg_temp[0]的值为102， 尝试从从设备（地址为1）的设备寄存器中（地址为6，7）读取数据，并打印出来
+   * 如果reg_temp[0]的值为199，关闭modbus tcp master设备，
+   * 如果需要再次启动modbus tcp master，可以继续把reg_temp[0]的值修改为100既可再次连接。
+5. 如果要运行PIKA_PI_WIRELESS_FIRMWARE固件，希望用wifi来运行modbus TCP或者其他基于网络的modbus实例的话，需要确保WiFi已经连接到AP路由上之后再用open函数运行modbus实例，否则，会导致由于网络未连接导致网络的modbus执行失败。
 
 ###### （2） 基于air780e，基于C语言，封装pikapython，采用xmake编译
 

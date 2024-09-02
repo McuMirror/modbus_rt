@@ -14,6 +14,7 @@
 #include "esp_netif.h"
 
 #include "modbus_tcp.h"
+#include "modbus_rtu.h"
 
 /* The examples use WiFi configuration that you can set via project configuration menu
 
@@ -159,8 +160,16 @@ esp_netif_t* wifi_init_sta(void)
 
 
 esp_netif_t* sta_netif = NULL;
-int modbus_tcp_slave_open_test( void );
-int modbus_tcp_slave_for_udp_open_test( void );
+uint16_t reg_read_temp[10] = {0};
+
+extern int modbus_tcp_slave_open_test( void );
+extern int modbus_tcp_slave_for_udp_open_test( void );
+extern int modbus_tcp_master_open_test(char* ip, int port); 
+extern uint16_t reg_temp[10];
+extern rtu_modbus_device_t rs;
+extern tcp_modbus_device_t ts;
+extern tcp_modbus_device_t tsu;
+extern tcp_modbus_device_t tm;
 void *wifi_thread_entry(void * arg) {
     //连接wifi
     esp_err_t ret = nvs_flash_init();
@@ -186,5 +195,41 @@ void *wifi_thread_entry(void * arg) {
     }
     while(true){
         vTaskDelay(10/portTICK_PERIOD_MS);
+        if((NULL != rs) || (NULL != ts) || (NULL != tsu)) {
+            if(NULL == tm) {
+                //还未创建modbus tcp master
+                if(100 == reg_temp[0]) {
+                    if(MODBUS_RT_EOK != (ret = modbus_tcp_master_open_test("192.168.28.150", 502))) {
+                        printf("modbus_tcp_master_open faild.\n");
+                    }
+                    printf("modbus_tcp_master_open success.\n");
+                    reg_temp[0] = 0;
+                }
+            }else {
+                //已经成功创建modbus tcp master
+                if(101 == reg_temp[0]) {
+                    //尝试把reg_temp[8]，reg_temp[9]的数值写入到从设备（地址为1）的设备寄存器中（地址为8，9）
+                    if(MODBUS_RT_EOK != modbus_tcp_excuse(tm, 1, AGILE_MODBUS_FC_WRITE_MULTIPLE_REGISTERS, 8, 2, &reg_temp[8])) {
+                        printf("modbus_tcp_excuse faild.\n");
+                    }
+                    printf("modbus_tcp_excuse success.\n");
+                    reg_temp[0] = 0;
+                } else if(102 == reg_temp[0]) {
+                    //尝试从从设备（地址为1）的设备寄存器中（地址为6，7）读取数据，并打印出来
+                    if(MODBUS_RT_EOK != modbus_tcp_excuse(tm, 1, AGILE_MODBUS_FC_READ_HOLDING_REGISTERS, 6, 2, &reg_read_temp[6])) {
+                        printf("modbus_tcp_excuse faild.\n");
+                    }
+                    printf("modbus_tcp_excuse success,0x%04X, 0x%04X.\n", reg_read_temp[6], reg_read_temp[7]);
+                    reg_temp[0] = 0;
+                }else if(199 == reg_temp[0]) {
+                    //关闭modbus tcp master
+                    if(MODBUS_RT_EOK != modbus_tcp_destroy(&tm)) {
+                        printf("modbus_udp_destroy faild.\n");
+                    }
+                    printf("modbus_udp_destroy success.\n");
+                    reg_temp[0] = 0;
+                }
+            }
+        }
     }
 }

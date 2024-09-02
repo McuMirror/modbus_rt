@@ -326,6 +326,12 @@ ts.open()
 
 ![esp32_console](img/esp32_console.png)
 
+4. In this case, we created three slave devices: Modbus RTU Slave, Modbus TCP Slave, and Modbus TCP Slave over UDP. We simultaneously bound the registers to the `reg_temp` variable. By modifying the value of `reg_temp[0]`, we can start and operate a Modbus TCP Master device. The operation process is as follows:
+   - If the value of `reg_temp[0]` is 100, the Modbus TCP Master will be started and will connect to a Modbus TCP Slave. The IP address and port number of the slave device are input through the `int modbus_tcp_master_open_test(char* ip, int port)` function interface.
+   - If the value of `reg_temp[0]` is 101, the values in `reg_temp[8]` and `reg_temp[9]` will be written to the device registers (addresses 8 and 9) of the slave device (address 1).
+   - If the value of `reg_temp[0]` is 102, data will be read from the device registers (addresses 6 and 7) of the slave device (address 1) and printed out.
+   - If the value of `reg_temp[0]` is 199, the Modbus TCP Master device will be shut down.
+   - If you need to restart the Modbus TCP Master, you can modify the value of `reg_temp[0]` to 100 to reconnect.
 4. If you want to run the PIKA_PI_WIRELESS_FIRMWARE firmware and hope to use wifi to run modbus TCP or other network-based modbus instances, ensure that WiFi is connected to the AP router before using the open function to run the modbus instance; otherwise, it will cause network-based modbus execution to fail due to the network not being connected.
 
 ###### （2） Based on air780e, using C language, encapsulating pikapython, compiled with xmake
