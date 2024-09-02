@@ -224,9 +224,9 @@ void *wifi_thread_entry(void * arg) {
                 }else if(199 == reg_temp[0]) {
                     //关闭modbus tcp master
                     if(MODBUS_RT_EOK != modbus_tcp_destroy(&tm)) {
-                        printf("modbus_udp_destroy faild.\n");
+                        printf("modbus_tcp_destroy faild.\n");
                     }
-                    printf("modbus_udp_destroy success.\n");
+                    printf("modbus_tcp_destroy success.\n");
                     reg_temp[0] = 0;
                 }
             }
