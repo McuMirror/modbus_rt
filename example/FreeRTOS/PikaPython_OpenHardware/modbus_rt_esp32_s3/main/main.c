@@ -64,7 +64,7 @@ void app_main(void)
     int ret = MODBUS_RT_EOK;
     if(MODBUS_RT_EOK != (ret = modbus_rtu_slave_open_test())) {
         printf("modbus_rtu_slave_open faild.\n");
-    } F
+    } else {
         printf("modbus_rtu_slave_open success.\n");
     }
 
