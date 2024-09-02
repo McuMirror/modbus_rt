@@ -178,6 +178,7 @@ static void modbus_rtu_slave_net_entry(rtu_modbus_device_t dev) {
             modbus_rt_mutex_unlock(&(dev->mutex));
 
             modbus_rt_sem_post(&(dev->sem));
+            modbus_rt_thread_exit(dev->thread);
             return ;
         }
         //设置超时时间为100ms
@@ -202,6 +203,7 @@ static void modbus_rtu_slave_net_entry(rtu_modbus_device_t dev) {
             modbus_rt_mutex_unlock(&(dev->mutex));
 
             modbus_rt_sem_post(&(dev->sem));
+            modbus_rt_thread_exit(dev->thread);
             return ;
         } else if (0 == nready) {
             continue;       // 超时，继续等待
@@ -357,6 +359,7 @@ static void modbus_rtu_slave_entry(void *parameter) {
                 modbus_rt_mutex_unlock(&(dev->mutex));
 
                 modbus_rt_sem_post(&(dev->sem));
+                modbus_rt_thread_exit(dev->thread);
                 return ;
             }
             read_len = modbus_rt_serial_receive(dev->serial, dev->ctx->read_buf, dev->ctx->read_bufsz, MODBUS_RTU_TIME_OUT, dev->byte_timeout);
@@ -809,6 +812,7 @@ static void modbus_rtu_master_net_entry(rtu_modbus_device_t dev) {
             modbus_rt_mutex_unlock(&(dev->mutex));
 
             modbus_rt_sem_post(&(dev->sem));
+            modbus_rt_thread_exit(dev->thread);
             return ;
         }
         if(0 < data->function) {  
@@ -856,6 +860,7 @@ static void modbus_rtu_master_net_entry(rtu_modbus_device_t dev) {
                 modbus_rt_mutex_unlock(&(dev->mutex));
 
                 modbus_rt_sem_post(&(dev->sem));
+                modbus_rt_thread_exit(dev->thread);
                 return ;
 
             } else if (0 == nready) {
@@ -872,6 +877,7 @@ static void modbus_rtu_master_net_entry(rtu_modbus_device_t dev) {
                 modbus_rt_mutex_unlock(&(dev->mutex));
 
                 modbus_rt_sem_post(&(dev->sem));
+                modbus_rt_thread_exit(dev->thread);
                 return ;
             } else if (0 == read_len) {     
                 //等于0表示服务端断开，下次会短线自动重连
@@ -930,6 +936,7 @@ static void modbus_rtu_master_entry(void *parameter) {
                 modbus_rt_mutex_unlock(&(dev->mutex));
 
                 modbus_rt_sem_post(&(dev->sem));
+                modbus_rt_thread_exit(dev->thread);
                 return ;
             }
             //串口通信

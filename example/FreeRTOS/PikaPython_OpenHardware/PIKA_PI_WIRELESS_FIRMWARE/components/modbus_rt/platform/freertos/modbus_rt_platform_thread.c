@@ -37,10 +37,16 @@ void modbus_rt_thread_start(modbus_rt_thread_t* thread) {
     vTaskResume(thread->thread);
 }
 void modbus_rt_thread_destroy(modbus_rt_thread_t* thread) {
-    if (NULL != thread)
-        vTaskDelete(thread->thread);
-    
     modbus_rt_free(thread);
+}
+
+void modbus_rt_thread_exit(modbus_rt_thread_t* thread) {
+    if (NULL == thread) {
+        vTaskDelete(NULL);
+        return;
+    }
+    vTaskDelete(thread->thread);
+    return;
 }
 
 void modbus_rt_thread_sleep(unsigned int ms) {

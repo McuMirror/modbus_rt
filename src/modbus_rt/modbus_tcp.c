@@ -182,6 +182,7 @@ static void modbus_tcp_slave_entry(void *parameter) {
             modbus_rt_mutex_unlock(&(dev->mutex));
 
             modbus_rt_sem_post(&(dev->sem));
+            modbus_rt_thread_exit(dev->thread);
             return ;
         }
         //设置超时时间为100ms
@@ -206,6 +207,7 @@ static void modbus_tcp_slave_entry(void *parameter) {
             modbus_rt_mutex_unlock(&(dev->mutex));
 
             modbus_rt_sem_post(&(dev->sem));
+            modbus_rt_thread_exit(dev->thread);
             return ;
         } else if (0 == nready) {
             continue;       // 超时，继续等待
@@ -662,6 +664,7 @@ static void modbus_tcp_master_entry(void *parameter) {
             modbus_rt_mutex_unlock(&(dev->mutex));
 
             modbus_rt_sem_post(&(dev->sem));
+            modbus_rt_thread_exit(dev->thread);
             return ;
         }
         if(0 < data->function) {
@@ -674,6 +677,7 @@ static void modbus_tcp_master_entry(void *parameter) {
 
                     /* fuction执行完毕 */
                     modbus_rt_sem_post(&(data->completion));
+                    modbus_rt_thread_exit(dev->thread);
                     continue;
                 }
             }
@@ -709,6 +713,7 @@ static void modbus_tcp_master_entry(void *parameter) {
                 modbus_rt_mutex_unlock(&(dev->mutex));
 
                 modbus_rt_sem_post(&(dev->sem));
+                modbus_rt_thread_exit(dev->thread);
                 return ;
 
             } else if (0 == nready) {

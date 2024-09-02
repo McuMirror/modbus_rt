@@ -51,6 +51,11 @@ void modbus_rt_thread_destroy(modbus_rt_thread_t *thread) {
     osThreadTerminate(thread->ptThread);
 }
 
+void modbus_rt_thread_exit(modbus_rt_thread_t* thread) {
+    UNUSED(thread);
+    return;
+}
+
 void modbus_rt_thread_sleep(unsigned int ms) {
     osDelay(ms);
 }

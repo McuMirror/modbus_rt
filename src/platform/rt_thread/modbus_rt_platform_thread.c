@@ -40,6 +40,11 @@ void modbus_rt_thread_destroy(modbus_rt_thread_t* thread) {
     modbus_rt_free(thread);
 }
 
+void modbus_rt_thread_exit(modbus_rt_thread_t* thread) {
+    UNUSED(thread);
+    return;
+}
+
 void modbus_rt_thread_sleep(unsigned int ms) {
     rt_thread_mdelay(ms);
 }

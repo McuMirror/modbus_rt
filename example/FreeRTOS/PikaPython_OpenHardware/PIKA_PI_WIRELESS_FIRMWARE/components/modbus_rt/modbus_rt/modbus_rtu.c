@@ -178,6 +178,7 @@ static void modbus_rtu_slave_net_entry(rtu_modbus_device_t dev) {
             modbus_rt_mutex_unlock(&(dev->mutex));
 
             modbus_rt_sem_post(&(dev->sem));
+            modbus_rt_thread_exit(dev->thread);
             return ;
         }
         //设置超时时间为100ms
@@ -202,6 +203,7 @@ static void modbus_rtu_slave_net_entry(rtu_modbus_device_t dev) {
             modbus_rt_mutex_unlock(&(dev->mutex));
 
             modbus_rt_sem_post(&(dev->sem));
+            modbus_rt_thread_exit(dev->thread);
             return ;
         } else if (0 == nready) {
             continue;       // 超时，继续等待
@@ -357,6 +359,7 @@ static void modbus_rtu_slave_entry(void *parameter) {
                 modbus_rt_mutex_unlock(&(dev->mutex));
 
                 modbus_rt_sem_post(&(dev->sem));
+                modbus_rt_thread_exit(dev->thread);
                 return ;
             }
             read_len = modbus_rt_serial_receive(dev->serial, dev->ctx->read_buf, dev->ctx->read_bufsz, MODBUS_RTU_TIME_OUT, dev->byte_timeout);
@@ -809,6 +812,7 @@ static void modbus_rtu_master_net_entry(rtu_modbus_device_t dev) {
             modbus_rt_mutex_unlock(&(dev->mutex));
 
             modbus_rt_sem_post(&(dev->sem));
+            modbus_rt_thread_exit(dev->thread);
             return ;
         }
         if(0 < data->function) {  
@@ -829,7 +833,7 @@ static void modbus_rtu_master_net_entry(rtu_modbus_device_t dev) {
             modbus_rtu_master_excuse_run(dev);
             /* fuction执行完毕 */
             modbus_rt_sem_post(&(data->completion));
-        } else if ((SOCK_STREAM == dev->type) && (0 < dev->sock)) {
+        } else if (((SOCK_STREAM == dev->type) || (SOCK_DGRAM == dev->type)) && (0 < dev->sock)) {
             sock_timeout = 0;
             //检错socket是不是被远程的服务器端断开,仅限TCP使用
             int read_len = 0;
@@ -843,7 +847,7 @@ static void modbus_rtu_master_net_entry(rtu_modbus_device_t dev) {
 
             //设置超时时间为50ms
             timeout.tv_sec = 0;
-            timeout.tv_usec = 100000;
+            timeout.tv_usec = 10000;
 
             nready = select(maxfd + 1, &sock_read_set, NULL, NULL, &timeout);
             //负数表示select错误
@@ -856,6 +860,7 @@ static void modbus_rtu_master_net_entry(rtu_modbus_device_t dev) {
                 modbus_rt_mutex_unlock(&(dev->mutex));
 
                 modbus_rt_sem_post(&(dev->sem));
+                modbus_rt_thread_exit(dev->thread);
                 return ;
 
             } else if (0 == nready) {
@@ -872,6 +877,7 @@ static void modbus_rtu_master_net_entry(rtu_modbus_device_t dev) {
                 modbus_rt_mutex_unlock(&(dev->mutex));
 
                 modbus_rt_sem_post(&(dev->sem));
+                modbus_rt_thread_exit(dev->thread);
                 return ;
             } else if (0 == read_len) {     
                 //等于0表示服务端断开，下次会短线自动重连
@@ -930,6 +936,7 @@ static void modbus_rtu_master_entry(void *parameter) {
                 modbus_rt_mutex_unlock(&(dev->mutex));
 
                 modbus_rt_sem_post(&(dev->sem));
+                modbus_rt_thread_exit(dev->thread);
                 return ;
             }
             //串口通信

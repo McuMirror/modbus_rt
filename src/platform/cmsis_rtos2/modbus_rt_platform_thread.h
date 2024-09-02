@@ -34,6 +34,7 @@ void modbus_rt_thread_startup(modbus_rt_thread_t *thread);
 void modbus_rt_thread_stop(modbus_rt_thread_t *thread);
 void modbus_rt_thread_start(modbus_rt_thread_t *thread);
 void modbus_rt_thread_destroy(modbus_rt_thread_t *thread);
+void modbus_rt_thread_exit(modbus_rt_thread_t* thread);
 
 void modbus_rt_thread_sleep(unsigned int ms);
 
