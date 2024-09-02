@@ -186,12 +186,14 @@ void *wifi_thread_entry(void * arg) {
     if(NULL != sta_netif) {
         if(MODBUS_RT_EOK != (ret = modbus_tcp_slave_open_test())) {
             printf("modbus_tcp_slave_open faild.\n");
+        } else {
+            printf("modbus_tcp_slave_open success.\n");
         }
-        printf("modbus_tcp_slave_open success.\n");
         if(MODBUS_RT_EOK != (ret = modbus_tcp_slave_for_udp_open_test())) {
             printf("modbus_tcp_slave_for_udp_open faild.\n");
+        } else {
+            printf("modbus_tcp_slave_for_udp_open success.\n");
         }
-        printf("modbus_tcp_slave_for_udp_open success.\n");
     }
     while(true){
         vTaskDelay(10/portTICK_PERIOD_MS);
@@ -201,8 +203,9 @@ void *wifi_thread_entry(void * arg) {
                 if(100 == reg_temp[0]) {
                     if(MODBUS_RT_EOK != (ret = modbus_tcp_master_open_test("192.168.28.150", 502))) {
                         printf("modbus_tcp_master_open faild.\n");
+                    } else {
+                        printf("modbus_tcp_master_open success.\n");
                     }
-                    printf("modbus_tcp_master_open success.\n");
                     reg_temp[0] = 0;
                 }
             }else {
@@ -211,22 +214,25 @@ void *wifi_thread_entry(void * arg) {
                     //尝试把reg_temp[8]，reg_temp[9]的数值写入到从设备（地址为1）的设备寄存器中（地址为8，9）
                     if(MODBUS_RT_EOK != modbus_tcp_excuse(tm, 1, AGILE_MODBUS_FC_WRITE_MULTIPLE_REGISTERS, 8, 2, &reg_temp[8])) {
                         printf("modbus_tcp_excuse faild.\n");
+                    } else {
+                        printf("modbus_tcp_excuse success.\n");
                     }
-                    printf("modbus_tcp_excuse success.\n");
                     reg_temp[0] = 0;
                 } else if(102 == reg_temp[0]) {
                     //尝试从从设备（地址为1）的设备寄存器中（地址为6，7）读取数据，并打印出来
                     if(MODBUS_RT_EOK != modbus_tcp_excuse(tm, 1, AGILE_MODBUS_FC_READ_HOLDING_REGISTERS, 6, 2, &reg_read_temp[6])) {
                         printf("modbus_tcp_excuse faild.\n");
+                    } else {
+                        printf("modbus_tcp_excuse success,0x%04X, 0x%04X.\n", reg_read_temp[6], reg_read_temp[7]);
                     }
-                    printf("modbus_tcp_excuse success,0x%04X, 0x%04X.\n", reg_read_temp[6], reg_read_temp[7]);
                     reg_temp[0] = 0;
                 }else if(199 == reg_temp[0]) {
                     //关闭modbus tcp master
                     if(MODBUS_RT_EOK != modbus_tcp_destroy(&tm)) {
                         printf("modbus_tcp_destroy faild.\n");
+                    } else {
+                        printf("modbus_tcp_destroy success.\n");
                     }
-                    printf("modbus_tcp_destroy success.\n");
                     reg_temp[0] = 0;
                 }
             }
