@@ -202,6 +202,7 @@ void *wifi_thread_entry(void * arg) {
                 //还未创建modbus tcp master
                 if(100 == reg_temp[0]) {
                     if(MODBUS_RT_EOK != (ret = modbus_tcp_master_open_test("192.168.28.150", 502))) {
+                        modbus_tcp_destroy(&tm);
                         printf("modbus_tcp_master_open faild.\n");
                     } else {
                         printf("modbus_tcp_master_open success.\n");
