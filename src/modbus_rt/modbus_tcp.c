@@ -348,7 +348,7 @@ static int modbus_tcp_master_txrx(tcp_modbus_device_t dev, agile_modbus_t *ctx, 
 
     //设置超时时间为1s
     timeout.tv_sec = 0;
-    timeout.tv_usec = 1000000;
+    timeout.tv_usec = 100000;
     if(dev->type == SOCK_STREAM) {
         send(dev->sock, ctx->send_buf, send_len, 0);
         nready = select(maxfd + 1, &sock_read_set, NULL, NULL, &timeout);

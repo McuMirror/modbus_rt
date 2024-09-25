@@ -430,7 +430,7 @@ static int modbus_rtu_master_net_txrx(rtu_modbus_device_t dev, agile_modbus_t *c
 
     //设置超时时间为1s
     timeout.tv_sec = 0;
-    timeout.tv_usec = 1000000;
+    timeout.tv_usec = 100000;
     if(dev->type == SOCK_STREAM) {
 #if MODBUS_ASCII_SLAVE_ENABLE
         int send_len_temp = send_len;

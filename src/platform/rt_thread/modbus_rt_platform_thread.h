@@ -13,7 +13,7 @@ extern "C" {
 
 #include <rtthread.h>
 
-typedef struct platform_thread {
+typedef struct modbus_rt_thread {
     rt_thread_t thread;
 } modbus_rt_thread_t;
 
