@@ -187,7 +187,7 @@ static void modbus_tcp_slave_entry(void *parameter) {
         }
         //设置超时时间为100ms
         timeout.tv_sec = 0;
-        timeout.tv_usec = 100000;
+        timeout.tv_usec = MODBUS_SELECT_TIME_OUT;
         //每次select返回之后，fd_set集合就会变化，再select时，就不能使用，
         //所以我们要保存设置fd_set 和 读取的fd_set
         sock_read_set = sock_all_set;
@@ -348,7 +348,7 @@ static int modbus_tcp_master_txrx(tcp_modbus_device_t dev, agile_modbus_t *ctx, 
 
     //设置超时时间为1s
     timeout.tv_sec = 0;
-    timeout.tv_usec = 100000;
+    timeout.tv_usec = MODBUS_SELECT_TIME_OUT;
     if(dev->type == SOCK_STREAM) {
         send(dev->sock, ctx->send_buf, send_len, 0);
         nready = select(maxfd + 1, &sock_read_set, NULL, NULL, &timeout);
@@ -700,7 +700,7 @@ static void modbus_tcp_master_entry(void *parameter) {
 
             //设置超时时间为50ms
             timeout.tv_sec = 0;
-            timeout.tv_usec = 10000;
+            timeout.tv_usec = MODBUS_SELECT_TIME_OUT;
 
             nready = select(maxfd + 1, &sock_read_set, NULL, NULL, &timeout);
             //负数表示select错误

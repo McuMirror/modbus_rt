@@ -173,6 +173,14 @@ extern "C" {
     extern int tcp_modbus_nums;
 #endif
 
+/**
+ @verbatim
+    设置Select函数的等待时间，单位：us
+ @endverbatim
+ */
+#ifndef MODBUS_SELECT_TIME_OUT
+    #define MODBUS_SELECT_TIME_OUT                  100000
+#endif
 
 /**
  @verbatim
